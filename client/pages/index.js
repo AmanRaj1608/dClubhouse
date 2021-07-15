@@ -1,4 +1,5 @@
 import React, { useState, useContext } from "react";
+import Link from 'next/link';
 import { useRouter } from "next/router";
 import { makeStyles } from "@material-ui/core/styles";
 
@@ -53,7 +54,9 @@ const Index = () => {
             {isAuth && <Button className={classes.btn} onClick={createRoom}>
               {isLoading ? 'Loading...' : '🌱 Start room'}
             </Button>}
-            {!isAuth && <Button className={classes.btn} onClick={createRoom}>Join Now</Button>}
+            {!isAuth && <Link href="account">
+              <Button className={classes.btn}>Join Now</Button>
+            </Link>}
           </div>
           <img className={classes.descImg} src="/cattery.svg" />
         </div>

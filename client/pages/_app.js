@@ -26,6 +26,13 @@ const App = ({ Component, pageProps }) => {
 
       <Neo>
         <User>
+          <marquee style={{
+            // padding: 10,
+            background: '#F1ECC3',
+            color: '#000'
+          }}
+            behavior="scroll" direction="left" scrollamount="20" loop="infinite"
+          >This is demo deployed. To use this application please use genesis wallet - <a href="https://github.com/BakaOtaku/dClubhouse#how-to-set-up" target="blank">github.com/BakaOtaku/dClubhouse</a></marquee>
           <Component {...pageProps} />
         </User>
       </Neo>

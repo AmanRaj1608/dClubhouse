@@ -14,7 +14,7 @@ MONGO_DB=clubhouse
 
 ```bash
 docker build -t back .
-docker run -p 80:80
+docker run -d -p 80:80 back
 ```
 
 Project Flow

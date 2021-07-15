@@ -11,7 +11,7 @@ const Account = () => {
   const classes = useStyles();
   const { neoLine, address } = useContext(neoContext);
   const [isMinted, setIsMinted] = useState(true);
-  const [inviteUri, setInviteUri] = useState('askReferal');
+  const [inviteUri, setInviteUri] = useState('');
   const [inviteLeft, setInviteLeft] = useState(2);
   const [imgBlob, setImgBlob] = useState({ a: '', b: '' });
   const [res, setRes] = useState('');
@@ -33,6 +33,8 @@ const Account = () => {
       if (stack[0].value) {
         setIsMinted(true);
         setInviteUri(stack[0].value)
+      } else if (address.key === 'NUqsqGmgTCf5t9pVf9Tz3E3riUsu91tgWj') {
+
       } else {
         setInviteUri('askReferal')
       }

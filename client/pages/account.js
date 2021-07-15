@@ -13,11 +13,11 @@ const Account = () => {
   const [isMinted, setIsMinted] = useState(false);
   const [res, setRes] = useState('');
 
-  useEffect(() => {
-    if (!isAuth) {
-      window.location = "/";
-    }
-  }, [isAuth])
+  // useEffect(() => {
+  //   if (!isAuth) {
+  //     window.location = "/";
+  //   }
+  // }, [isAuth])
 
   useEffect(() => {
     const fetchLock = async () => {

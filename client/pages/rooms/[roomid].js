@@ -41,12 +41,12 @@ const Room = ({ roomDetails }) => {
   const socketRef = useRef();
   const [tempPromoted, setTempPromoted] = useState();
 
-  const { isAuth } = useContext(neoContext);
-  useEffect(() => {
-    if (!isAuth) {
-      window.location = "/";
-    }
-  }, [isAuth])
+  // const { isAuth } = useContext(neoContext);
+  // useEffect(() => {
+  //   if (!isAuth) {
+  //     window.location = "/";
+  //   }
+  // }, [isAuth])
 
   const promote = (id) => {
     if (isAdmin) {
@@ -154,7 +154,7 @@ const Room = ({ roomDetails }) => {
 
   useEffect(() => {
     const roomId = new URLSearchParams(window.location.search).get("roomid");
-    const socket = io("http://localhost:80");
+    const socket = io("http://198.199.90.165");
     socketRef.current = socket;
     const signalClient = new SimpleSignalClient(socket);
 

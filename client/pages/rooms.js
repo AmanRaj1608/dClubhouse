@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import Link from 'next/link';
 import Head from 'next/head';
 import { makeStyles } from "@material-ui/core/styles";
@@ -38,11 +38,15 @@ const Rooms = () => {
           </div>
           <div className={classes.room}>
             <h1 className={classes.roomTitle}>Fun Channel</h1>
-            <Button className={classes.btn} >🌱 Join Room</Button>
+            <Link href="rooms/60ec9b49bd70336e3cabb22a">
+              <Button className={classes.btn} >🌱 Join Room</Button>
+            </Link>
           </div>
           <div className={classes.room}>
             <h1 className={classes.roomTitle}>Games</h1>
-            <Button className={classes.btn} >🌱 Join Room</Button>
+            <Link href="rooms/60ec9b49bd70336e3cabb22a">
+              <Button className={classes.btn} >🌱 Join Room</Button>
+            </Link>
           </div>
         </div>
       </section>
