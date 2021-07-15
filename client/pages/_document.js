@@ -35,6 +35,9 @@ export default class MyDocument extends Document {
               *:before {
                 box-sizing: border-box;
               }
+              a, a:visited, a:hover, a:active {
+                color: #F6F6F6;
+              }
               body {
                 font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
                 font-size: 1rem;
