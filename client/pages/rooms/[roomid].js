@@ -154,7 +154,7 @@ const Room = ({ roomDetails }) => {
 
   useEffect(() => {
     const roomId = new URLSearchParams(window.location.search).get("roomid");
-    const socket = io("http://198.199.90.165");
+    const socket = io("http://cattery.ml");
     socketRef.current = socket;
     const signalClient = new SimpleSignalClient(socket);
 
