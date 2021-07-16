@@ -35,7 +35,7 @@ export default class MyDocument extends Document {
               *:before {
                 box-sizing: border-box;
               }
-              a, a:visited, a:hover, a:active {
+              span {
                 color: #F6F6F6;
               }
               body {

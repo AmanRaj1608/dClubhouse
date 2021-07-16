@@ -33,7 +33,7 @@ const App = ({ Component, pageProps }) => {
             color: '#fff'
           }}
             behavior="scroll" direction="left" scrollamount="10" loop="infinite"
-          >This is demo deployed. To use this application please use genesis wallet - <a href="https://github.com/BakaOtaku/dClubhouse#how-to-set-up" target="blank">github.com/BakaOtaku/dClubhouse</a></marquee>
+          >This is demo deployed. To use this application please use genesis wallet pkey - <span>KwPMakChCEpGHtc919QvJcaHpwjD7KR8XcwZe15NK6AQGbe41VkX</span></marquee>
           <Component {...pageProps} />
         </User>
       </Neo>
