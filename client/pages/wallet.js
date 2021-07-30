@@ -3,25 +3,30 @@ import Head from 'next/head';
 // material ui
 import { makeStyles } from "@material-ui/core/styles";
 import { Button, Input } from "@material-ui/core";
+import CircularProgress from '@material-ui/core/CircularProgress';
 // components
 import Navbar from "@components/Navbar";
 import { neoContext } from "@contexts/neoContext";
 
 const Account = () => {
   const classes = useStyles();
-  const { neoLine, address } = useContext(neoContext);
-  const [isMinted, setIsMinted] = useState(true);
-  const [inviteUri, setInviteUri] = useState('');
+  const { neoLine, address, userNft } = useContext(neoContext);
+  const [isMinted, setIsMinted] = useState(false);
+  const [inviteUri, setInviteUri] = useState('askReferal');
+  const [loading, setLoading] = useState(false);
   const [inviteLeft, setInviteLeft] = useState(2);
   const [imgBlob, setImgBlob] = useState({ a: '', b: '' });
   const [res, setRes] = useState('');
+  const [inp, setInp] = useState('');
 
   // 1 image -> from context [getOwnerNftDetails]
   // 2 image -> inviteUri [getInviteeNftDetails]
   useEffect(() => {
     const fetchLock = async () => {
+      setLoading(true);
+      console.log("check getInviteeNftDetails");
       const { stack } = await neoLine.invokeRead({
-        scriptHash: "0xfbf28fbe5925b0e6c0b878207ee4ffc9a429d37b",
+        scriptHash: "0x7d5cbdae1671be0da45c36228adf4da6d613ce85",
         operation: "getInviteeNftDetails",
         args: [{
           type: "Address",
@@ -32,20 +37,22 @@ const Account = () => {
       console.log("invitee NFTs url", stack[0]);
       if (stack[0].value) {
         setIsMinted(true);
-        setInviteUri(stack[0].value)
-      } else if (address.key === 'NUqsqGmgTCf5t9pVf9Tz3E3riUsu91tgWj') {
-
+        let bal = atob(stack[0].value);
+        bal = bal.substring(1, bal.length - 1);
+        setInviteUri(bal);
       } else {
         setInviteUri('askReferal')
       }
+      setLoading(false);
     }
     if (neoLine) fetchLock()
   }, [address])
   // number of nft Image left
   useEffect(() => {
     const fetchInviteLeft = async () => {
+      setLoading(true);
       const { stack } = await neoLine.invokeRead({
-        scriptHash: "0xfbf28fbe5925b0e6c0b878207ee4ffc9a429d37b",
+        scriptHash: "0x7d5cbdae1671be0da45c36228adf4da6d613ce85",
         operation: "getOwnerInviteeLeft",
         args: [{
           type: "Address",
@@ -57,46 +64,43 @@ const Account = () => {
       if (stack[0].value) {
         setInviteLeft(stack[0].value);
       }
+      setLoading(false);
     }
     if (neoLine && isMinted) fetchInviteLeft()
   }, [address, isMinted])
 
+  // transfer nft
   const transferNFT = async (e) => {
     // take input for address 
+    console.log(inp);
     e.preventDefault();
     const result = await neoLine.invoke({
-      scriptHash: "0xfbf28fbe5925b0e6c0b878207ee4ffc9a429d37b",
-      operation: "get",
+      scriptHash: "0x7d5cbdae1671be0da45c36228adf4da6d613ce85",
+      operation: "transferNft",
       args: [
         {
           type: "Address",
-          value: address.key
+          value: inp
         },
       ],
       signers: [{ account: address.publicKey, scopes: 128 }]
     });
-    // setIsMinted(true);
-    // setRes(result.txid)
+    setIsMinted(true);
     console.log(result);
-    await new Promise(resolve => setTimeout(resolve, 5000));
-    setInviteUri('abc')
+    setRes(result.txid);
   }
   const convertBase64ToBlob = async (base64Image) => {
-    // Decode Base64 string
     const decodedData = window.atob(base64Image);
-    // Create UNIT8ARRAY of size same as row data length
     const uInt8Array = new Uint8Array(decodedData.length);
-    // Insert all character code into uInt8Array
     for (let i = 0; i < decodedData.length; ++i) {
       uInt8Array[i] = decodedData.charCodeAt(i);
     }
-    // Return BLOB image after conversion
     return new Blob([uInt8Array]);
   }
   useEffect(() => {
     const fetchImg = async () => {
       console.log("here")
-      let res = await fetch(`https://www.cattery-backend.ml/getImage/1`);
+      let res = await fetch(`https://www.cattery-backend.ml/getImage/${userNft}`);
       res = await res.json();
       let img = res.image;
       let end = await img.length;
@@ -105,7 +109,7 @@ const Account = () => {
       console.log(blob);
       let objectURL1 = URL.createObjectURL(blob)
 
-      res = await fetch(`https://www.cattery-backend.ml/getImage/2`);
+      res = await fetch(`https://www.cattery-backend.ml/getImage/${inviteUri}`);
       res = await res.json();
       img = res.image;
       end = await img.length;
@@ -116,22 +120,41 @@ const Account = () => {
 
       setImgBlob({ a: objectURL1, b: objectURL2 });
     }
-    fetchImg();
-  }, [])
+    if (userNft && inviteUri !== 'askReferal' && isMinted) fetchImg();
+    console.log(userNft, inviteUri)
+  }, [userNft, inviteUri])
+
+  // mint
+  const mint = async (e) => {
+    console.log("minting")
+    e.preventDefault();
+    const result = await neoLine.invoke({
+      scriptHash: "0x7d5cbdae1671be0da45c36228adf4da6d613ce85",
+      operation: "mint",
+      args: [{
+        type: "String",
+        value: `https://www.cattery-backend.ml/generate/${address.key}`
+      }],
+      signers: [{ account: address.publicKey, scopes: 128 }]
+    });
+    setIsMinted(true);
+    // setRes(result);
+    console.log(result);
+  }
 
   const NotValid = (
     <section className={classes.boxContainer}>
       <h1 className={classes.title}>Wallet</h1>
       <hr className={classes.break} />
       <div className={classes.descText}>
-        Looks like you have locked tokens but haven't mint the NFT.
+        Looks like you have not minted the NFT.
       </div>
 
       <div style={{ margin: "auto", textAlign: "center" }}>
         <img src="/cat.png" className={classes.img} />
       </div>
       <div className={classes.descText}>
-        <Button onClick={transferNFT} className={classes.btn}>Mint your NFT</Button>
+        <Button onClick={mint} className={classes.btn}>Mint your NFT</Button>
       </div>
     </section>
   )
@@ -146,6 +169,8 @@ const Account = () => {
           <h1 className={classes.title}>Wallet</h1>
           <hr className={classes.break} />
           <div className={classes.descText}>
+            {loading && <CircularProgress />}
+            <br />
             Congratulations 🥳 you are now part of the system.
           </div>
           {/* <div style={{ margin: "auto", textAlign: "center" }}>
@@ -160,7 +185,7 @@ const Account = () => {
             <img src={imgBlob.b} className={classes.img} style={{ width: 200, marginTop: 20 }} />
             <br />
             <br />
-            <Input style={{ color: '#fff' }} />
+            <Input value={inp} onChange={(e) => setInp(e.target.value)} style={{ color: '#fff' }} />
             <br />
             {
               <Button onClick={transferNFT} className={classes.btn}>Tranfer refer NFT</Button>

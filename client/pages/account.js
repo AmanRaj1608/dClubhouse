@@ -10,30 +10,24 @@ import { neoContext } from "@contexts/neoContext";
 const Account = () => {
   const classes = useStyles();
   const { neoLine, address, isAuth } = useContext(neoContext);
-  const [isMinted, setIsMinted] = useState(false);
+  const [isLoacked, setIsLoacked] = useState(false);
   const [res, setRes] = useState('');
-
-  // useEffect(() => {
-  //   if (!isAuth) {
-  //     window.location = "/";
-  //   }
-  // }, [isAuth])
 
   useEffect(() => {
     const fetchLock = async () => {
       const { stack } = await neoLine.invokeRead({
-        scriptHash: "0xfbf28fbe5925b0e6c0b878207ee4ffc9a429d37b",
-        operation: "getOwnerActive",
+        scriptHash: "0x7d5cbdae1671be0da45c36228adf4da6d613ce85",
+        operation: "getLockPoolAmount",
         args: [{
           type: "Address",
           value: address.key
         }],
         signers: []
       });
-      // console.log("here", stack[0].value);
+      console.log("here", stack[0].value);
       if (stack[0].value === "1")
-        setIsMinted(true);
-      else setIsMinted(false);
+        setIsLoacked(true);
+      else setIsLoacked(false);
     }
     if (neoLine) fetchLock()
   }, [neoLine, address])
@@ -41,7 +35,7 @@ const Account = () => {
   const lock = async (e) => {
     e.preventDefault();
     const result = await neoLine.invoke({
-      scriptHash: "0xfbf28fbe5925b0e6c0b878207ee4ffc9a429d37b",
+      scriptHash: "0x7d5cbdae1671be0da45c36228adf4da6d613ce85",
       operation: "lockToken",
       args: [
         {
@@ -55,25 +49,10 @@ const Account = () => {
       ],
       signers: [{ account: address.publicKey, scopes: 128 }]
     });
-    setIsMinted(true);
+    if (result)
+      setIsLoacked(true);
     console.log(result);
-  }
-
-  const mint = async (e) => {
-    console.log("minting")
-    e.preventDefault();
-    const result = await neoLine.invoke({
-      scriptHash: "0xfbf28fbe5925b0e6c0b878207ee4ffc9a429d37b",
-      operation: "mint",
-      args: [{
-        type: "String",
-        value: `https://www.cattery-backend.ml/generate/${address.key}`
-      }],
-      signers: [{ account: address.publicKey, scopes: 128 }]
-    });
-    setIsMinted(true);
-    setRes(result);
-    console.log(result);
+    setRes(result.txid);
   }
 
   return (
@@ -82,17 +61,16 @@ const Account = () => {
         <title>~/cattery/register/</title>
       </Head>
       <Navbar />
-      {console.log("isminted", isMinted)}
+      {console.log("isLoacked", isLoacked)}
       <section className={classes.boxContainer}>
         <h1 className={classes.title}>Register</h1>
         <hr className={classes.break} />
         <div className={classes.descText}>
-          {!isMinted && 'Please, first lock your Whisker (WSK) tokens to start accepting NFT invites.'}
-          {isMinted && 'You have already lock WSK, go ask for referal nft.'}
+          {!isLoacked && 'Please, first lock your Whisker (WSK) tokens to start accepting NFT invites.'}
+          {isLoacked && 'You have already locked the WSK tokens, go ask for NFT referals.'}
         </div>
 
-        {!isMinted && <Button onClick={lock} className={classes.btn}>Lock tokens</Button>}
-        {isMinted && <Button onClick={mint} className={classes.btn}>Mint NFT</Button>}
+        {!isLoacked && <Button onClick={lock} className={classes.btn}>Lock tokens</Button>}
         <div className={classes.descText}>
           <br />
           {res && "You have locked WSK, go ask for referal nft."}

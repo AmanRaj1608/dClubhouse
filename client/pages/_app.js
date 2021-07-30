@@ -26,14 +26,14 @@ const App = ({ Component, pageProps }) => {
 
       <Neo>
         <User>
-          <marquee style={{
+          {/* <marquee style={{
             padding: 6,
             fontSize: 16,
             background: '#191F2A',
             color: '#fff'
           }}
             behavior="scroll" direction="left" scrollamount="10" loop="infinite"
-          >This is demo deployed. To use this application please use genesis wallet pkey - <span>KwPMakChCEpGHtc919QvJcaHpwjD7KR8XcwZe15NK6AQGbe41VkX</span></marquee>
+          >This is demo deployed. To use this application please use genesis wallet pkey - <span>KwPMakChCEpGHtc919QvJcaHpwjD7KR8XcwZe15NK6AQGbe41VkX</span></marquee> */}
           <Component {...pageProps} />
         </User>
       </Neo>

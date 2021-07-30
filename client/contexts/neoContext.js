@@ -20,10 +20,10 @@ export default function Neo({ children }) {
       key: addr.address,
       publicKey
     });
-    console.info("Address found", address);
+    console.info("Address found", addr.address, publicKey);
 
     const { stack } = await neoLineObj.invokeRead({
-      scriptHash: "0xbe8c210d1104070b998d8aaf35e4f9e085b5c2dc",
+      scriptHash: "0x7d5cbdae1671be0da45c36228adf4da6d613ce85",
       operation: "getOwnerNftDetails",
       args: [
         {
@@ -33,8 +33,10 @@ export default function Neo({ children }) {
       ],
       signers: []
     });
+    console.log(stack)
     if (stack[0].value) {
-      const bal = atob(stack[0].value);
+      let bal = atob(stack[0].value);
+      bal = bal.substring(1, bal.length - 1)
       console.info("ownerNFT", bal);
       setIsAuth(true);
       setUserNft(bal);
